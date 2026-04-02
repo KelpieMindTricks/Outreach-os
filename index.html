@@ -975,13 +975,9 @@ async function callClaude(prompt, outputId, wcId){
   try{
     const r=await fetch('https://bold-dawn-7263.a-nielsen1974.workers.dev',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        
-      },
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
+        apiKey:apiKey,
         model:'claude-sonnet-4-6',
         max_tokens:1000,
         messages:[{role:'user',content:prompt}]
@@ -1158,7 +1154,7 @@ TOUCH ${t.num} — ${t.label} (${t.type}):
 ${t.prompt}
 
 RULES: Peer-to-peer, warm, no pitch until touch 6. Each touch builds on the last. Sound like Allan wrote it — direct, confident, human. Output the message ONLY, no labels.`;
-  const r=await fetch('https://bold-dawn-7263.a-nielsen1974.workers.dev',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01',},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:fullPrompt}]})});
+  const r=await fetch('https://bold-dawn-7263.a-nielsen1974.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({apiKey:apiKey,model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:fullPrompt}]})});
   const data=await r.json();
   const text=data.content?.find(b=>b.type==='text')?.text||'Error generating touch '+t.num;
   box.className='sequence-msg';
