@@ -236,7 +236,7 @@ select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='htt
 }
 </style>
 </head>
-<body>
+<body onload="document.getElementById('api-dot').classList.add('ok');document.getElementById('api-status-label').textContent='Ready';document.getElementById('api-status-btn').style.cursor='default';">
 
 <!-- TOP BAR -->
 <header class="topbar">
@@ -249,7 +249,7 @@ select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='htt
     <div class="topbar-sub">Allan Nielsen HR Consulting</div>
   </div>
   <div class="topbar-spacer"></div>
-  <div class="api-status" onclick="openModal()" id="api-status-btn">
+  <div class="api-status" onclick="" id="api-status-btn">
     <div class="api-dot" id="api-dot"></div>
     <span id="api-status-label">Add API key</span>
   </div>
@@ -905,12 +905,8 @@ select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='htt
 </main>
 
 <script>
-let apiKey = localStorage.getItem('outos_api_key') || '';
+let apiKey = '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';
 let mcCurrentStep = 1;
-if(apiKey){
-  document.getElementById('api-dot').classList.add('ok');
-  document.getElementById('api-status-label').textContent='API key saved';
-}
 const sqTouches = [
   {num:1, label:'Connect', type:'LinkedIn / email', prompt:'Write a warm, personal reconnect message or connection request note. No pitch. Just re-establishing contact. 30–40 words max.'},
   {num:2, label:'Value share', type:'No ask', prompt:'Write a short value-share message. Share something genuinely useful to them — an article, observation, or insight — with absolutely no ask. 40–60 words.'},
@@ -977,13 +973,13 @@ async function callClaude(prompt, outputId, wcId){
   box.className='output-box loading';
   box.textContent='Drafting your content...';
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
+    const r=await fetch('https://bold-dawn-7263.a-nielsen1974.workers.dev',{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
         'x-api-key':apiKey,
         'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-calls':'true'
+        
       },
       body:JSON.stringify({
         model:'claude-sonnet-4-6',
@@ -1162,7 +1158,7 @@ TOUCH ${t.num} — ${t.label} (${t.type}):
 ${t.prompt}
 
 RULES: Peer-to-peer, warm, no pitch until touch 6. Each touch builds on the last. Sound like Allan wrote it — direct, confident, human. Output the message ONLY, no labels.`;
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:fullPrompt}]})});
+  const r=await fetch('https://bold-dawn-7263.a-nielsen1974.workers.dev',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01',},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:fullPrompt}]})});
   const data=await r.json();
   const text=data.content?.find(b=>b.type==='text')?.text||'Error generating touch '+t.num;
   box.className='sequence-msg';
