@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Outreach OS · Allan Nielsen HR Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g900:#0f2318;--g800:#1B3A2A;--g700:#2E6B4F;--g600:#3B8C62;--g400:#5DB87A;--g200:#A8DDB5;--g100:#D4F0DB;--g50:#F0FAF2;
+  --t800:#1B3A36;--t600:#2D6B63;--t100:#B2DFDB;--t50:#E0F2F1;
+  --a600:#B85C11;--a100:#FDE8C8;--a50:#FEF6EC;
+  --p800:#3C2070;--p100:#DDD6F8;--p50:#F0EEFE;
+  --n900:#111827;--n700:#374151;--n500:#6B7280;--n400:#9CA3AF;--n300:#D1D5DB;--n200:#E5E7EB;--n100:#F3F4F6;--n50:#F9FAFB;
+  --white:#FFFFFF;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:24px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --nav-w:220px;
+  --hdr-h:56px;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--n50);color:var(--n900);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--hdr-h);
+  background:var(--g800);display:flex;align-items:center;
+  padding:0 1.25rem;gap:12px;z-index:200;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.topbar-logo{
+  width:30px;height:30px;border-radius:var(--radius-sm);
+  background:var(--g400);display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-size:14px;color:var(--g900);flex-shrink:0;
+}
+.topbar-name{font-size:14px;font-weight:500;color:var(--g100);letter-spacing:.01em}
+.topbar-sub{font-size:12px;color:var(--g400);font-weight:300}
+.topbar-spacer{flex:1}
+.api-status{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--g200);cursor:pointer;
+  padding:5px 10px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.05);
+  transition:all .15s;
+}
+.api-status:hover{background:rgba(255,255,255,0.1)}
+.api-dot{width:7px;height:7px;border-radius:50%;background:var(--n400);flex-shrink:0}
+.api-dot.ok{background:var(--g400)}
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:4px}
+.hamburger span{width:18px;height:1.5px;background:var(--g200);border-radius:2px;transition:all .2s}
+
+/* ── API MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--white);border-radius:var(--radius-xl);padding:2rem;
+  max-width:440px;width:90%;box-shadow:var(--shadow-md);
+}
+.modal h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--g800);margin-bottom:6px}
+.modal p{font-size:13px;color:var(--n500);line-height:1.6;margin-bottom:1rem}
+.modal-warn{background:var(--a50);border:1px solid var(--a100);border-radius:var(--radius-md);padding:10px 12px;font-size:12px;color:var(--a600);margin-bottom:1rem;line-height:1.5}
+.modal-row{display:flex;gap:8px}
+.modal-row input{flex:1;font-size:13px}
+.modal-close{margin-top:12px;font-size:12px;color:var(--n400);cursor:pointer;text-align:center}
+.modal-close:hover{color:var(--n700)}
+
+/* ── SIDEBAR NAV ── */
+.sidebar{
+  position:fixed;top:var(--hdr-h);left:0;bottom:0;width:var(--nav-w);
+  background:var(--white);border-right:1px solid var(--n200);
+  overflow-y:auto;z-index:100;padding:1rem 0;
+}
+.nav-section-label{
+  font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--n400);padding:8px 16px 4px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 16px;cursor:pointer;border-radius:0;
+  transition:all .12s;border-left:2px solid transparent;
+  font-size:13px;color:var(--n500);
+}
+.nav-item:hover{background:var(--n100);color:var(--n700)}
+.nav-item.active{
+  background:var(--g50);color:var(--g800);font-weight:500;
+  border-left-color:var(--g600);
+}
+.nav-icon{
+  width:28px;height:28px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;background:var(--n100);
+}
+.nav-item.active .nav-icon{background:var(--g100)}
+.nav-badge{
+  margin-left:auto;font-size:10px;padding:2px 6px;
+  border-radius:10px;background:var(--g100);color:var(--g700);font-weight:500;
+}
+
+/* ── MAIN CONTENT ── */
+.main{
+  margin-left:var(--nav-w);margin-top:var(--hdr-h);
+  min-height:calc(100vh - var(--hdr-h));padding:2rem;
+}
+.view{display:none}
+.view.active{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SHARED COMPONENTS ── */
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--g800);margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--n500);margin-bottom:2rem;line-height:1.5}
+.card{background:var(--white);border:1px solid var(--n200);border-radius:var(--radius-xl);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow-sm)}
+.card-sm{background:var(--white);border:1px solid var(--n200);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow-sm)}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--g600);margin-bottom:6px}
+.card-title{font-size:16px;font-weight:500;color:var(--n900);margin-bottom:4px}
+.card-hint{font-size:13px;color:var(--n500);line-height:1.6;margin-bottom:1.25rem}
+.example{background:var(--g50);border-left:3px solid var(--g400);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 14px;font-size:13px;color:var(--g700);font-style:italic;line-height:1.6;margin-bottom:1.25rem}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.field-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field-label{font-size:12px;font-weight:500;color:var(--n700)}
+input[type=text],input[type=password],textarea,select{
+  width:100%;padding:9px 12px;font-size:14px;font-family:'DM Sans',sans-serif;
+  border:1px solid var(--n300);border-radius:var(--radius-md);
+  background:var(--white);color:var(--n900);outline:none;
+  transition:border-color .15s,box-shadow .15s;appearance:none;-webkit-appearance:none;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--g600);box-shadow:0 0 0 3px rgba(59,140,98,.12)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.btn{padding:9px 18px;font-size:14px;font-family:'DM Sans',sans-serif;border-radius:var(--radius-md);cursor:pointer;font-weight:500;transition:all .15s;border:1px solid var(--n300);background:var(--white);color:var(--n700)}
+.btn:hover{background:var(--n100)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--g800);color:var(--white);border-color:var(--g800)}
+.btn-primary:hover{background:var(--g700);border-color:var(--g700)}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-xs{padding:5px 10px;font-size:12px}
+.btn-row{display:flex;justify-content:flex-end;gap:8px;margin-top:1rem}
+.chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--n300);color:var(--n500);background:var(--white);font-family:'DM Sans',sans-serif;transition:all .15s;user-select:none}
+.chip:hover{border-color:var(--g400);color:var(--g700)}
+.chip.sel{background:var(--g50);border-color:var(--g400);color:var(--g800);font-weight:500}
+.tip-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.tip{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--n500);line-height:1.5}
+.tip-dot{width:5px;height:5px;border-radius:50%;background:var(--g400);flex-shrink:0;margin-top:5px}
+.output-box{
+  background:var(--n50);border:1px solid var(--n200);border-radius:var(--radius-lg);
+  padding:1.25rem;font-size:14px;line-height:1.8;color:var(--n900);
+  white-space:pre-wrap;min-height:100px;
+}
+.output-box.loading{color:var(--n400);font-style:italic}
+.progress-track{height:4px;background:var(--n200);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--g600);border-radius:2px;transition:width .3s ease}
+.step-nav-h{display:flex;gap:4px;margin-bottom:1.5rem;flex-wrap:wrap}
+.step-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--n200);font-size:12px;cursor:pointer;color:var(--n500);background:var(--n50);transition:all .15s;user-select:none}
+.step-pill.active{background:var(--g50);color:var(--g800);border-color:var(--g200);font-weight:500}
+.step-pill.done{color:var(--g700)}
+.step-pill.done .pnum,.step-pill.active .pnum{background:var(--g700);color:var(--white);border-color:var(--g700)}
+.pnum{width:18px;height:18px;border-radius:50%;border:1px solid var(--n300);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--n500);flex-shrink:0;transition:all .15s}
+.step-panel-inner{display:none}
+.step-panel-inner.vis{display:block;animation:fadeUp .2s ease}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--white);border:1px solid var(--n200);border-radius:var(--radius-lg);padding:1rem;box-shadow:var(--shadow-sm)}
+.kpi-label{font-size:11px;color:var(--n400);margin-bottom:4px}
+.kpi-val{font-size:26px;font-weight:500;color:var(--n900)}
+.kpi-sub{font-size:11px;color:var(--n400);margin-top:2px}
+.touch-track{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem}
+.touch-node{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:68px;cursor:pointer}
+.touch-circle{width:36px;height:36px;border-radius:50%;border:1px solid var(--n300);background:var(--n50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--n500);transition:all .2s}
+.touch-node.done .touch-circle{background:var(--g100);color:var(--g800);border-color:var(--g400)}
+.touch-node.active .touch-circle{background:var(--white);border:2px solid var(--g600);color:var(--g700)}
+.touch-node.current .touch-circle{background:var(--g800);color:var(--white);border-color:var(--g800)}
+.touch-label{font-size:10px;color:var(--n400);text-align:center;line-height:1.3;max-width:72px}
+.engine-tabs{display:flex;gap:2px;background:var(--n100);border-radius:var(--radius-md);padding:3px;margin-bottom:1.5rem}
+.engine-tab{flex:1;padding:7px;text-align:center;font-size:13px;border-radius:var(--radius-sm);cursor:pointer;color:var(--n500);transition:all .15s;font-weight:400}
+.engine-tab.active{background:var(--white);color:var(--g800);font-weight:500;box-shadow:var(--shadow-sm)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.tag-built{background:var(--g100);color:var(--g800)}
+.tag-sig{background:var(--g50);color:var(--g700)}
+.tag-rel{background:var(--t50);color:var(--t800)}
+.tag-off{background:var(--a50);color:var(--a600)}
+.divider{height:1px;background:var(--n200);margin:1.5rem 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.copy-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.word-count{font-size:12px;color:var(--n400)}
+
+/* ── DASHBOARD SPECIFIC ── */
+.engine-card-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.engine-card{border-radius:var(--radius-lg);padding:1.25rem;border:1px solid}
+.engine-card.sig{background:var(--g50);border-color:var(--g200)}
+.engine-card.rel{background:var(--t50);border-color:var(--t100)}
+.engine-card.off{background:var(--a50);border-color:var(--a100)}
+.engine-card-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.engine-card.sig .engine-card-label{color:var(--g600)}
+.engine-card.rel .engine-card-label{color:var(--t600)}
+.engine-card.off .engine-card-label{color:var(--a600)}
+.engine-card-title{font-size:15px;font-weight:500;color:var(--n900);margin-bottom:8px}
+.engine-card-item{font-size:12px;color:var(--n600,#4B5563);padding:3px 0;border-bottom:1px solid rgba(0,0,0,0.06);line-height:1.4}
+.engine-card-item:last-child{border-bottom:none}
+.action-list{display:flex;flex-direction:column;gap:8px}
+.action-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--white);border:1px solid var(--n200);border-radius:var(--radius-md);cursor:pointer;transition:all .15s}
+.action-item:hover{border-color:var(--g300,#86C99E);background:var(--g50)}
+.action-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.action-text{flex:1}
+.action-title{font-size:13px;font-weight:500;color:var(--n900)}
+.action-desc{font-size:12px;color:var(--n500)}
+.action-arrow{font-size:16px;color:var(--n400)}
+
+/* ── TOUCH SEQUENCE ── */
+.sequence-card{background:var(--white);border:1px solid var(--n200);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:10px}
+.sequence-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--n50);border-bottom:1px solid var(--n200);cursor:pointer}
+.sequence-num{width:24px;height:24px;border-radius:50%;background:var(--g800);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.sequence-title{font-size:13px;font-weight:500;color:var(--n900)}
+.sequence-type{font-size:11px;color:var(--n400);margin-left:auto}
+.sequence-body{padding:12px 14px;display:none}
+.sequence-body.open{display:block}
+.sequence-msg{font-size:13px;line-height:1.7;color:var(--n700);white-space:pre-wrap;background:var(--n50);padding:10px;border-radius:var(--radius-md);margin-bottom:8px}
+.sequence-msg.loading{color:var(--n400);font-style:italic}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  :root{--nav-w:0px}
+  .sidebar{transform:translateX(-220px);width:220px;transition:transform .25s;z-index:300}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:1rem}
+  .hamburger{display:flex}
+  .engine-card-row,.three-col,.two-col,.field-grid{grid-template-columns:1fr}
+  .engine-tabs{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="hamburger" onclick="toggleSidebar()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="topbar-logo">AN</div>
+  <div>
+    <div class="topbar-name">Outreach OS</div>
+    <div class="topbar-sub">Allan Nielsen HR Consulting</div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="api-status" onclick="openModal()" id="api-status-btn">
+    <div class="api-dot" id="api-dot"></div>
+    <span id="api-status-label">Add API key</span>
+  </div>
+</header>
+
+<!-- API MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h3>Anthropic API key</h3>
+    <p>Stored in your browser session only. Never sent anywhere except the Anthropic API. You need this for all AI-powered tools.</p>
+    <div class="modal-warn">Get your key at <strong>console.anthropic.com</strong> → API Keys. Starts with <strong>sk-ant-...</strong></div>
+    <div class="modal-row">
+      <input type="password" id="api-key-input" placeholder="sk-ant-..." />
+      <button class="btn btn-primary btn-sm" onclick="saveApiKey()">Save</button>
+    </div>
+    <div class="modal-close" onclick="closeModal()">Close</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item active" onclick="showView('dashboard',this)">
+    <div class="nav-icon">⚡</div>Dashboard
+  </div>
+
+  <div class="nav-section-label" style="margin-top:8px">Signal engine</div>
+  <div class="nav-item" onclick="showView('insight-post',this)">
+    <div class="nav-icon">✍️</div>Insight post composer
+  </div>
+  <div class="nav-item" onclick="showView('case-snapshot',this)">
+    <div class="nav-icon">📋</div>Case snapshot builder
+  </div>
+
+  <div class="nav-section-label" style="margin-top:8px">Relationship engine</div>
+  <div class="nav-item" onclick="showView('message-composer',this)">
+    <div class="nav-icon">💬</div>Message composer
+    <span class="nav-badge">5-step</span>
+  </div>
+  <div class="nav-item" onclick="showView('sequence-planner',this)">
+    <div class="nav-icon">🔁</div>8-touch planner
+  </div>
+
+  <div class="nav-section-label" style="margin-top:8px">Offer engine</div>
+  <div class="nav-item" onclick="showView('front-door',this)">
+    <div class="nav-icon">🚪</div>Front door offer builder
+  </div>
+  <div class="nav-item" onclick="showView('follow-up',this)">
+    <div class="nav-icon">📩</div>Follow-up generator
+  </div>
+
+  <div class="nav-section-label" style="margin-top:8px">System</div>
+  <div class="nav-item" onclick="showView('guide',this)">
+    <div class="nav-icon">📖</div>Framework guide
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main" id="main">
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div class="view active" id="view-dashboard">
+  <div class="page-title">Good morning, Allan.</div>
+  <div class="page-sub">Your complete consultant outreach system — Signal, Relationship, and Offer engines in one place.</div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">System</div><div class="kpi-val" style="font-size:18px;color:var(--g700)">Outreach OS</div><div class="kpi-sub">All 3 engines active</div></div>
+    <div class="kpi"><div class="kpi-label">Framework</div><div class="kpi-val" style="font-size:16px;color:var(--t600)">MindAbility + Sam Eaton</div><div class="kpi-sub">Combined methodology</div></div>
+    <div class="kpi"><div class="kpi-label">Tools available</div><div class="kpi-val">6</div><div class="kpi-sub">AI-powered</div></div>
+    <div class="kpi"><div class="kpi-label">Touch cadence</div><div class="kpi-val">8</div><div class="kpi-sub">Per contact</div></div>
+  </div>
+
+  <div class="engine-card-row">
+    <div class="engine-card sig">
+      <div class="engine-card-label">Signal engine</div>
+      <div class="engine-card-title">Attract inbound</div>
+      <div class="engine-card-item">1 insight post per week</div>
+      <div class="engine-card-item">Case snapshots as credibility assets</div>
+      <div class="engine-card-item">Make your authority searchable</div>
+    </div>
+    <div class="engine-card rel">
+      <div class="engine-card-label">Relationship engine</div>
+      <div class="engine-card-title">Activate your network</div>
+      <div class="engine-card-item">Tier 1 → Tier 2 → Tier 3</div>
+      <div class="engine-card-item">5-step authority message</div>
+      <div class="engine-card-item">Full 8-touch cadence</div>
+    </div>
+    <div class="engine-card off">
+      <div class="engine-card-label">Offer engine</div>
+      <div class="engine-card-title">Convert to engagement</div>
+      <div class="engine-card-item">Front door offer before retainer</div>
+      <div class="engine-card-item">Diagnostic or mini-project</div>
+      <div class="engine-card-item">Sequenced follow-up cadence</div>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin-bottom:10px">Start here — today's actions</div>
+  <div class="action-list">
+    <div class="action-item" onclick="showView('insight-post',null)">
+      <div class="action-icon" style="background:var(--g50)">✍️</div>
+      <div class="action-text">
+        <div class="action-title">Write this week's insight post</div>
+        <div class="action-desc">Signal engine · Publish one senior insight to attract decision-makers</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </div>
+    <div class="action-item" onclick="showView('message-composer',null)">
+      <div class="action-icon" style="background:var(--t50)">💬</div>
+      <div class="action-text">
+        <div class="action-title">Draft a Tier 1 outreach message</div>
+        <div class="action-desc">Relationship engine · 5-step authority framework, AI-drafted</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </div>
+    <div class="action-item" onclick="showView('sequence-planner',null)">
+      <div class="action-icon" style="background:var(--p50)">🔁</div>
+      <div class="action-text">
+        <div class="action-title">Plan a full 8-touch sequence</div>
+        <div class="action-desc">Relationship engine · Map all 8 touches for a target contact</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </div>
+    <div class="action-item" onclick="showView('case-snapshot',null)">
+      <div class="action-icon" style="background:var(--a50)">📋</div>
+      <div class="action-text">
+        <div class="action-title">Build a case snapshot</div>
+        <div class="action-desc">Signal engine · Turn a project into a shareable credibility asset</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </div>
+    <div class="action-item" onclick="showView('front-door',null)">
+      <div class="action-icon" style="background:var(--a50)">🚪</div>
+      <div class="action-text">
+        <div class="action-title">Design your front door offer</div>
+        <div class="action-desc">Offer engine · Low-commitment entry before the retainer conversation</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="card-title" style="margin-bottom:6px">Key rules to live by</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div class="card-sm" style="padding:10px 14px"><div style="font-size:12px;color:var(--n900);line-height:1.5"><strong style="color:var(--g700)">Don't start with LinkedIn search.</strong> Start with relationships you already have.</div></div>
+    <div class="card-sm" style="padding:10px 14px"><div style="font-size:12px;color:var(--n900);line-height:1.5"><strong style="color:var(--g700)">One partner = multiple warm introductions.</strong> Prioritise Tier 2 referral network.</div></div>
+    <div class="card-sm" style="padding:10px 14px"><div style="font-size:12px;color:var(--n900);line-height:1.5"><strong style="color:var(--g700)">Lead with insight, not a pitch.</strong> Curiosity and serving — not selling.</div></div>
+    <div class="card-sm" style="padding:10px 14px"><div style="font-size:12px;color:var(--n900);line-height:1.5"><strong style="color:var(--g700)">Done beats perfect every time.</strong> Send five Tier 1 messages this week.</div></div>
+  </div>
+</div>
+
+<!-- ══════════ INSIGHT POST COMPOSER ══════════ -->
+<div class="view" id="view-insight-post">
+  <div class="section-label">Signal engine</div>
+  <div class="page-title">Weekly insight post composer</div>
+  <div class="page-sub">Publish one senior insight per week. Attracts decision-makers and builds searchable authority — before you ever reach out.</div>
+
+  <div class="card">
+    <div class="card-title">What's your insight this week?</div>
+    <div class="card-hint">Think: something you've seen go wrong, a pattern in your clients, a trend hitting HR right now. Not a hot take — a grounded observation from experience.</div>
+
+    <div class="field-group">
+      <label class="field-label">Your core observation or insight</label>
+      <textarea id="ip-insight" rows="3" placeholder="e.g. Most companies think performance calibration is a once-a-year event. After running it across 4 regions, I've seen why that assumption is costing them talent retention..."></textarea>
+    </div>
+    <div class="field-grid">
+      <div class="field-group">
+        <label class="field-label">Sector / audience</label>
+        <input type="text" id="ip-sector" placeholder="e.g. Mid-size industrials, EMEA HR leaders" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Format</label>
+        <select id="ip-format">
+          <option value="authority observation post">Authority observation (what I've seen)</option>
+          <option value="contrarian take post">Contrarian take (most people think X, but...)</option>
+          <option value="lessons learned post">Lessons learned (what this taught me)</option>
+          <option value="trend analysis post">Trend analysis (what's changing and why)</option>
+          <option value="case insight post (anonymised)">Case insight (anonymised client example)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Any specific project, data, or result to draw from? (optional)</label>
+      <textarea id="ip-proof" rows="2" placeholder="e.g. Americas calibration cycle at Global Maritime — first region to complete, built the process from scratch..." style="min-height:60px"></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Tone</label>
+      <div class="chip-group" id="ip-tone-chips">
+        <div class="chip sel" onclick="selChip(this,'ip-tone-chips')">Direct and grounded</div>
+        <div class="chip" onclick="selChip(this,'ip-tone-chips')">Warm and conversational</div>
+        <div class="chip" onclick="selChip(this,'ip-tone-chips')">Quietly provocative</div>
+        <div class="chip" onclick="selChip(this,'ip-tone-chips')">Data-led</div>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-primary" onclick="generateInsightPost()">Generate post →</button>
+    </div>
+  </div>
+
+  <div id="ip-output" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:0">Your LinkedIn insight post</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-xs" id="ip-copy-btn" onclick="copyOutput('ip-draft','ip-copy-btn')">Copy</button>
+          <button class="btn btn-xs btn-primary" onclick="generateInsightPost()">Regenerate</button>
+        </div>
+      </div>
+      <div class="output-box" id="ip-draft"></div>
+      <div class="copy-row"><span class="word-count" id="ip-wc"></span></div>
+    </div>
+    <div class="tip-list">
+      <div class="tip"><div class="tip-dot"></div><span>Post at 7–9am Tuesday or Wednesday for best reach with decision-makers.</span></div>
+      <div class="tip"><div class="tip-dot"></div><span>Don't add a call to action — authority posts convert through trust, not prompts.</span></div>
+      <div class="tip"><div class="tip-dot"></div><span>After posting, engage the first 5 comments within an hour to boost reach.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CASE SNAPSHOT BUILDER ══════════ -->
+<div class="view" id="view-case-snapshot">
+  <div class="section-label">Signal engine</div>
+  <div class="page-title">Case snapshot builder</div>
+  <div class="page-sub">Turn a project into a one-page credibility asset. Share as a value gift before any pitch. Situation → approach → result.</div>
+
+  <div class="card">
+    <div class="field-grid">
+      <div class="field-group">
+        <label class="field-label">Client / company (can anonymise)</label>
+        <input type="text" id="cs-client" placeholder="e.g. Global maritime logistics firm" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Project type</label>
+        <select id="cs-type">
+          <option>Performance calibration design</option>
+          <option>Talent framework build</option>
+          <option>SuccessFactors implementation</option>
+          <option>Succession planning</option>
+          <option>L&D programme design</option>
+          <option>OD / change project</option>
+          <option>Interim HR leadership</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">The situation / problem they faced</label>
+      <textarea id="cs-situation" rows="2" placeholder="e.g. No consistent calibration process across 3 regions. Managers making promotion decisions without any shared standard. First year after introducing OKRs..."></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">What you did (your approach)</label>
+      <textarea id="cs-approach" rows="2" placeholder="e.g. Designed and facilitated a 3-phase calibration process. Built the scoring rubric, trained 40 managers, ran the Americas cycle as a pilot..."></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">The result (quantify where possible)</label>
+      <textarea id="cs-result" rows="2" placeholder="e.g. Americas region completed calibration first across all regions. 94% manager participation. Identified 12 high-potentials for succession pipeline..."></textarea>
+    </div>
+    <div class="field-grid">
+      <div class="field-group">
+        <label class="field-label">Output format</label>
+        <select id="cs-format">
+          <option value="concise one-pager style">Concise one-pager</option>
+          <option value="narrative case study style">Narrative case study</option>
+          <option value="bullet-point snapshot style">Bullet-point snapshot</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Intended recipient</label>
+        <input type="text" id="cs-recipient" placeholder="e.g. CHROs in industrial sector" />
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-primary" onclick="generateCaseSnapshot()">Build snapshot →</button>
+    </div>
+  </div>
+
+  <div id="cs-output" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:0">Your case snapshot</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-xs" id="cs-copy-btn" onclick="copyOutput('cs-draft','cs-copy-btn')">Copy</button>
+          <button class="btn btn-xs btn-primary" onclick="generateCaseSnapshot()">Regenerate</button>
+        </div>
+      </div>
+      <div class="output-box" id="cs-draft"></div>
+    </div>
+    <div class="tip-list">
+      <div class="tip"><div class="tip-dot"></div><span>Share this as a PDF attachment on touch 5 of your sequence — "thought this might be relevant to what you're dealing with."</span></div>
+      <div class="tip"><div class="tip-dot"></div><span>Build 3–5 snapshots covering different service areas to cover your full credibility stack.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MESSAGE COMPOSER ══════════ -->
+<div class="view" id="view-message-composer">
+  <div class="section-label">Relationship engine</div>
+  <div class="page-title">Authority message composer</div>
+  <div class="page-sub">The MindAbility 5-step framework. Leads with insight, not a pitch. Calibrated to your channel and relationship.</div>
+
+  <div class="progress-track"><div class="progress-fill" id="mc-prog" style="width:20%"></div></div>
+  <div class="step-nav-h">
+    <div class="step-pill active" onclick="mcStep(1)" id="mc-pill-1"><div class="pnum">1</div>Contact</div>
+    <div class="step-pill" onclick="mcStep(2)" id="mc-pill-2"><div class="pnum">2</div>Their world</div>
+    <div class="step-pill" onclick="mcStep(3)" id="mc-pill-3"><div class="pnum">3</div>Hook</div>
+    <div class="step-pill" onclick="mcStep(4)" id="mc-pill-4"><div class="pnum">4</div>Offer</div>
+    <div class="step-pill" onclick="mcStep(5)" id="mc-pill-5"><div class="pnum">5</div>Ask</div>
+  </div>
+
+  <div class="step-panel-inner vis" id="mc-p1">
+    <div class="card">
+      <div class="section-label">Step 1 — pick your contact</div>
+      <div class="card-hint">Start with Tier 1 — someone who has seen your work. Former colleague, past client, trusted peer.</div>
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Name</label><input type="text" id="mc-name" placeholder="e.g. Lars Eriksen" /></div>
+        <div class="field-group"><label class="field-label">Role / title</label><input type="text" id="mc-role" placeholder="e.g. VP HR EMEA" /></div>
+      </div>
+      <div class="field-grid">
+        <div class="field-group"><label class="field-label">Company</label><input type="text" id="mc-company" placeholder="e.g. Nexans" /></div>
+        <div class="field-group"><label class="field-label">Sector</label><input type="text" id="mc-sector" placeholder="e.g. Energy / Manufacturing" /></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Your relationship</label>
+        <div class="chip-group" id="mc-rel-chips">
+          <div class="chip" onclick="selChipVal(this,'mc-rel-chips','mc-rel')">Past client</div>
+          <div class="chip" onclick="selChipVal(this,'mc-rel-chips','mc-rel')">Former colleague</div>
+          <div class="chip" onclick="selChipVal(this,'mc-rel-chips','mc-rel')">Trusted peer</div>
+          <div class="chip" onclick="selChipVal(this,'mc-rel-chips','mc-rel')">Mentored / coached</div>
+          <div class="chip" onclick="selChipVal(this,'mc-rel-chips','mc-rel')">Referral partner</div>
+        </div>
+        <input type="text" id="mc-rel" placeholder="Or type your relationship..." />
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="mcStep(2)">Next →</button></div>
+  </div>
+
+  <div class="step-panel-inner" id="mc-p2">
+    <div class="card">
+      <div class="section-label">Step 2 — their world</div>
+      <div class="card-hint">A challenge their sector faces. Something you've advised on. A trend hitting companies like theirs. Be specific.</div>
+      <div class="example">"They're likely in a performance calibration crunch after rolling out OKRs — most EMEA industrial firms still don't have a process their leaders trust."</div>
+      <div class="field-group"><label class="field-label">What do you know about their world right now?</label><textarea id="mc-world" rows="4" placeholder="Describe the challenge, pressure, or trend they're probably facing..."></textarea></div>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="mcStep(1)">← Back</button><button class="btn btn-primary" onclick="mcStep(3)">Next →</button></div>
+  </div>
+
+  <div class="step-panel-inner" id="mc-p3">
+    <div class="card">
+      <div class="section-label">Step 3 — the hook</div>
+      <div class="card-hint">One insight sentence. Lead with what you've observed, not what you offer.</div>
+      <div class="example">"I've been watching how [sector] is dealing with [challenge] — based on what I've seen, most firms are getting this wrong."</div>
+      <div class="field-group"><label class="field-label">Your hook (one sentence)</label><textarea id="mc-hook" rows="3" placeholder="e.g. Performance conversations in mid-size industrials are breaking down right now — and most firms are treating the symptom, not the process..."></textarea></div>
+      <div class="tip-list">
+        <div class="tip"><div class="tip-dot"></div><span>Don't start with "I" — lead with the sector, trend, or observation.</span></div>
+        <div class="tip"><div class="tip-dot"></div><span>One sentence. If you can't, simplify the observation.</span></div>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="mcStep(2)">← Back</button><button class="btn btn-primary" onclick="mcStep(4)">Next →</button></div>
+  </div>
+
+  <div class="step-panel-inner" id="mc-p4">
+    <div class="card">
+      <div class="section-label">Step 4 — value offer</div>
+      <div class="card-hint">Something useful to share before any commercial ask. A diagnostic, checklist, or framework. Not a proposal.</div>
+      <div class="example">"I've just put together a short diagnostic on this — happy to share it if useful."</div>
+      <div class="field-group"><label class="field-label">What can you offer them right now?</label><textarea id="mc-offer" rows="3" placeholder="e.g. I put together a one-page calibration readiness checklist after running the Americas cycle — happy to share..."></textarea></div>
+      <div class="field-group"><label class="field-label">Channel</label>
+        <select id="mc-channel">
+          <option value="LinkedIn message">LinkedIn message</option>
+          <option value="email">Email</option>
+          <option value="WhatsApp message">WhatsApp / text</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="mcStep(3)">← Back</button><button class="btn btn-primary" onclick="mcStep(5)">Next →</button></div>
+  </div>
+
+  <div class="step-panel-inner" id="mc-p5">
+    <div class="card">
+      <div class="section-label">Step 5 — the ask</div>
+      <div class="card-hint">Low friction. Peer-to-peer. No agenda. Make it easy to say yes.</div>
+      <div class="example">"Would a 20-minute call be worth it? No agenda — just a peer conversation."</div>
+      <div class="field-group"><label class="field-label">What are you asking for?</label>
+        <select id="mc-ask">
+          <option value="a 20-minute peer conversation — no agenda, no pitch">20-min peer conversation</option>
+          <option value="a quick virtual coffee to reconnect">Virtual coffee / reconnect</option>
+          <option value="their honest reaction to the diagnostic before I share it more widely">Reaction to a diagnostic</option>
+          <option value="an intro to the right person on their team">Intro to the right person</option>
+          <option value="a 30-minute discovery call — no commitment, just to explore fit">30-min discovery call</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Personal touch (optional)</label><textarea id="mc-extra" rows="2" placeholder="Shared history, personal reference, or context to warm it up..." style="min-height:54px"></textarea></div>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="mcStep(4)">← Back</button><button class="btn btn-primary" onclick="generateMessage()">Generate message →</button></div>
+  </div>
+
+  <div id="mc-output" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="section-label" style="margin-bottom:0">Your authority message</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-xs" id="mc-copy-btn" onclick="copyOutput('mc-draft','mc-copy-btn')">Copy</button>
+          <button class="btn btn-xs btn-primary" onclick="generateMessage()">Regenerate</button>
+          <button class="btn btn-xs" onclick="resetMC()">New message</button>
+        </div>
+      </div>
+      <div id="mc-meta" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+      <div class="output-box" id="mc-draft"></div>
+      <div class="copy-row"><span class="word-count" id="mc-wc"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 8-TOUCH SEQUENCE PLANNER ══════════ -->
+<div class="view" id="view-sequence-planner">
+  <div class="section-label">Relationship engine</div>
+  <div class="page-title">8-touch sequence planner</div>
+  <div class="page-sub">Map and generate the full contact cadence for one prospect. From first connection to soft ask — all 8 touches, all drafted.</div>
+
+  <div class="card" id="sq-form">
+    <div class="card-title">Contact details</div>
+    <div class="card-hint">Fill this in once — all 8 messages will be drafted for this specific person.</div>
+    <div class="field-grid">
+      <div class="field-group"><label class="field-label">Name</label><input type="text" id="sq-name" placeholder="e.g. Anna Kristiansen" /></div>
+      <div class="field-group"><label class="field-label">Role</label><input type="text" id="sq-role" placeholder="e.g. VP People & Culture" /></div>
+    </div>
+    <div class="field-grid">
+      <div class="field-group"><label class="field-label">Company</label><input type="text" id="sq-company" placeholder="e.g. Vestas Wind Systems" /></div>
+      <div class="field-group"><label class="field-label">Sector</label><input type="text" id="sq-sector" placeholder="e.g. Renewable energy" /></div>
+    </div>
+    <div class="field-group"><label class="field-label">Tier / relationship</label>
+      <div class="chip-group" id="sq-tier-chips">
+        <div class="chip sel" onclick="selChipVal(this,'sq-tier-chips','sq-tier')">Tier 1 — Warm</div>
+        <div class="chip" onclick="selChipVal(this,'sq-tier-chips','sq-tier')">Tier 2 — Partner referral</div>
+        <div class="chip" onclick="selChipVal(this,'sq-tier-chips','sq-tier')">Tier 3 — New contact</div>
+      </div>
+      <input type="text" id="sq-tier" value="Tier 1 — Warm" style="display:none" />
+    </div>
+    <div class="field-group"><label class="field-label">Key challenge or trend in their world</label><textarea id="sq-challenge" rows="2" placeholder="e.g. Scaling people processes after rapid expansion — moving from startup HR to enterprise-grade talent management..."></textarea></div>
+    <div class="field-group"><label class="field-label">Your credibility asset to share (touch 5)</label><input type="text" id="sq-asset" placeholder="e.g. One-page talent framework readiness checklist" /></div>
+    <div class="field-group"><label class="field-label">Your front door offer (touch 6)</label><input type="text" id="sq-offer" placeholder="e.g. 60-minute talent diagnostic — free, no commitment" /></div>
+    <div class="btn-row" style="margin-top:0"><button class="btn btn-primary" onclick="generateSequence()">Generate full sequence →</button></div>
+  </div>
+
+  <div id="sq-output" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div>
+        <div class="card-title" id="sq-output-title">8-touch sequence</div>
+        <div style="font-size:13px;color:var(--n500)">Click each touch to expand and copy</div>
+      </div>
+      <button class="btn btn-sm" onclick="resetSequence()">New sequence</button>
+    </div>
+
+    <div class="touch-track" id="sq-touch-track"></div>
+    <div id="sq-cards"></div>
+  </div>
+</div>
+
+<!-- ══════════ FRONT DOOR OFFER BUILDER ══════════ -->
+<div class="view" id="view-front-door">
+  <div class="section-label">Offer engine</div>
+  <div class="page-title">Front door offer builder</div>
+  <div class="page-sub">Design your low-commitment entry offer. Prove worth before the retainer conversation. The front door is what turns warm conversations into paid engagements.</div>
+
+  <div class="card">
+    <div class="card-hint">A front door offer is a small, bounded piece of work that gives the client a taste of your expertise with minimal risk on their side. Think: diagnostic, audit, workshop, or mini-project. Not free — but priced to say yes easily.</div>
+
+    <div class="field-grid">
+      <div class="field-group"><label class="field-label">Your primary service area</label>
+        <select id="fd-service">
+          <option>Performance management & calibration</option>
+          <option>Talent framework design</option>
+          <option>SuccessFactors advisory / implementation</option>
+          <option>Succession planning</option>
+          <option>L&D programme design</option>
+          <option>OD & change consulting</option>
+          <option>Interim HR leadership</option>
+          <option>Talent management strategy</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Target client type</label><input type="text" id="fd-client" placeholder="e.g. Mid-size EMEA industrials, CHRO-led" /></div>
+    </div>
+    <div class="field-group"><label class="field-label">The problem they're typically facing</label><textarea id="fd-problem" rows="2" placeholder="e.g. No calibration process that their managers trust. Performance data exists but no-one knows how to use it for talent decisions..."></textarea></div>
+    <div class="field-grid">
+      <div class="field-group"><label class="field-label">Front door offer type</label>
+        <select id="fd-type">
+          <option value="diagnostic (half-day assessment with written findings)">Diagnostic — half-day assessment</option>
+          <option value="audit (review of existing materials with scored report)">Audit — scored report</option>
+          <option value="workshop (half-day facilitated session with outputs)">Workshop — facilitated session</option>
+          <option value="rapid review (2–3 hour deep-dive with recommendations)">Rapid review — 2–3 hours</option>
+          <option value="mini-project (defined 2-week deliverable)">Mini-project — 2-week</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Indicative price range</label>
+        <select id="fd-price">
+          <option value="€1,500–€2,500">€1,500–€2,500</option>
+          <option value="€2,500–€4,000">€2,500–€4,000</option>
+          <option value="€4,000–€6,000">€4,000–€6,000</option>
+          <option value="complimentary / no charge">Complimentary</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:0"><button class="btn btn-primary" onclick="generateFrontDoor()">Build my front door offer →</button></div>
+  </div>
+
+  <div id="fd-output" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:0">Your front door offer</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-xs" id="fd-copy-btn" onclick="copyOutput('fd-draft','fd-copy-btn')">Copy</button>
+          <button class="btn btn-xs btn-primary" onclick="generateFrontDoor()">Regenerate</button>
+        </div>
+      </div>
+      <div class="output-box" id="fd-draft"></div>
+    </div>
+    <div class="tip-list">
+      <div class="tip"><div class="tip-dot"></div><span>Use this on touch 6 of your sequence — after you've shared a credibility asset and had a discovery conversation.</span></div>
+      <div class="tip"><div class="tip-dot"></div><span>The front door offer removes the barrier of a big retainer commitment. It's the first step, not the destination.</span></div>
+      <div class="tip"><div class="tip-dot"></div><span>After delivery, 70%+ of front door clients move to a retainer or project. The quality of your work does the selling.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FOLLOW-UP GENERATOR ══════════ -->
+<div class="view" id="view-follow-up">
+  <div class="section-label">Offer engine</div>
+  <div class="page-title">Follow-up message generator</div>
+  <div class="page-sub">Drafts value-led, no-pressure follow-up messages for stalled conversations. Sending one message and going quiet is the most common outreach mistake.</div>
+
+  <div class="card">
+    <div class="field-grid">
+      <div class="field-group"><label class="field-label">Contact name</label><input type="text" id="fu-name" placeholder="e.g. Thomas Johansen" /></div>
+      <div class="field-group"><label class="field-label">Company</label><input type="text" id="fu-company" placeholder="e.g. Maersk Line" /></div>
+    </div>
+    <div class="field-group"><label class="field-label">What was the last message / interaction?</label><textarea id="fu-last" rows="2" placeholder="e.g. Sent intro message 10 days ago with a hook about SF calibration. No reply yet..."></textarea></div>
+    <div class="field-group"><label class="field-label">Which touch is this?</label>
+      <div class="chip-group" id="fu-touch-chips">
+        <div class="chip sel" onclick="selChipVal(this,'fu-touch-chips','fu-touch')">Touch 2 — value share</div>
+        <div class="chip" onclick="selChipVal(this,'fu-touch-chips','fu-touch')">Touch 3 — content engage</div>
+        <div class="chip" onclick="selChipVal(this,'fu-touch-chips','fu-touch')">Touch 5 — asset share</div>
+        <div class="chip" onclick="selChipVal(this,'fu-touch-chips','fu-touch')">Touch 7 — check-in</div>
+        <div class="chip" onclick="selChipVal(this,'fu-touch-chips','fu-touch')">Touch 8 — soft ask</div>
+      </div>
+      <input type="text" id="fu-touch" value="Touch 2 — value share" style="display:none" />
+    </div>
+    <div class="field-group"><label class="field-label">What value can you add in this follow-up?</label><textarea id="fu-value" rows="2" placeholder="e.g. Share a relevant article I found on HRIS consolidation — no strings, just useful..."></textarea></div>
+    <div class="field-group"><label class="field-label">Channel</label>
+      <select id="fu-channel">
+        <option value="LinkedIn message">LinkedIn message</option>
+        <option value="email">Email</option>
+        <option value="WhatsApp">WhatsApp</option>
+      </select>
+    </div>
+    <div class="btn-row" style="margin-top:0"><button class="btn btn-primary" onclick="generateFollowUp()">Generate follow-up →</button></div>
+  </div>
+
+  <div id="fu-output" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:0">Your follow-up message</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-xs" id="fu-copy-btn" onclick="copyOutput('fu-draft','fu-copy-btn')">Copy</button>
+          <button class="btn btn-xs btn-primary" onclick="generateFollowUp()">Regenerate</button>
+        </div>
+      </div>
+      <div class="output-box" id="fu-draft"></div>
+      <div class="copy-row"><span class="word-count" id="fu-wc"></span></div>
+    </div>
+    <div class="tip-list">
+      <div class="tip"><div class="tip-dot"></div><span>Every follow-up should add value, not just "checking in". Lead with something useful.</span></div>
+      <div class="tip"><div class="tip-dot"></div><span>Space touches 5–7 days apart. Don't go quiet after one message — most conversations open on touch 3–5.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FRAMEWORK GUIDE ══════════ -->
+<div class="view" id="view-guide">
+  <div class="page-title">Framework guide</div>
+  <div class="page-sub">The combined MindAbility and Sam Eaton methodology. Everything in this system is built on these principles.</div>
+
+  <div class="three-col" style="margin-bottom:1.5rem">
+    <div class="card-sm" style="border-top:3px solid var(--g600)">
+      <div class="section-label">Signal engine</div>
+      <div style="font-size:13px;color:var(--n700);line-height:1.6">
+        <p style="margin-bottom:8px">Publish one senior insight weekly. Create case snapshots. Make your authority searchable through keywords.</p>
+        <p style="font-style:italic;color:var(--n500)">Pull decision-makers to you before you reach out.</p>
+      </div>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--t600)">
+      <div class="section-label">Relationship engine</div>
+      <div style="font-size:13px;color:var(--n700);line-height:1.6">
+        <p style="margin-bottom:8px">Activate existing C-suite connections through personalised messages. Peer-to-peer. Authority-led. 8-touch cadence.</p>
+        <p style="font-style:italic;color:var(--n500)">Warm the conversation before it starts.</p>
+      </div>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--a600)">
+      <div class="section-label">Offer engine</div>
+      <div style="font-size:13px;color:var(--n700);line-height:1.6">
+        <p style="margin-bottom:8px">Present a front door offer before securing a retainer. Prove worth first. Use curiosity to build before you ask.</p>
+        <p style="font-style:italic;color:var(--n500)">Low commitment entry → full engagement.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title" style="margin-bottom:1rem">The three-tier target list</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;color:var(--g800);margin-bottom:6px">Tier 1 — Warm (start here)</div>
+        <div style="font-size:13px;color:var(--g700);line-height:1.6">Former colleagues at director/C-suite level · Past clients who saw results from your work · Trusted peers from industry networks or committees · HR leaders you've trained, mentored, or worked alongside</div>
+        <div style="font-size:12px;color:var(--g600);margin-top:8px;font-style:italic">You need 20 names. You probably know 50 without trying.</div>
+      </div>
+      <div style="background:var(--t50);border:1px solid var(--t100);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;color:var(--t800);margin-bottom:6px">Tier 2 — Partner referral channel</div>
+        <div style="font-size:13px;color:var(--t600);line-height:1.6">PE firms and portfolio ops directors · Large regional consulting leads who need delivery support · Employment law partners (top 10 regional firms) · Executive coaches working at C-suite level · Scale-up CEOs and CFOs from your network</div>
+        <div style="font-size:12px;color:var(--t600);margin-top:8px;font-style:italic">One partner = multiple warm introductions. Prioritise this.</div>
+      </div>
+      <div style="background:var(--n100);border:1px solid var(--n200);border-radius:var(--radius-lg);padding:1rem">
+        <div style="font-size:13px;font-weight:500;color:var(--n700);margin-bottom:6px">Tier 3 — New contacts (last, not first)</div>
+        <div style="font-size:13px;color:var(--n600,#4B5563);line-height:1.6">LinkedIn 2nd connections in target companies · People who engage with your content · Conference speakers or panellists in your space · People who commented on your former colleagues' posts</div>
+        <div style="font-size:12px;color:var(--n500);margin-top:8px;font-style:italic">Warm them with 2–3 value touches before any direct ask.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:1rem">The 8-touch connection cadence</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--g800);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">1</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Connect / reconnect</div><div style="font-size:12px;color:var(--n500)">LinkedIn connection or personal email — no pitch, just a warm reconnect</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--g800);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">2</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Value share — no ask</div><div style="font-size:12px;color:var(--n500)">Share something useful to them — article, insight, or observation. Nothing about you.</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--g800);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">3</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Engage their content</div><div style="font-size:12px;color:var(--n500)">Like, comment meaningfully on their posts. Builds visibility and rapport.</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--g600);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">4</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Hook + insight message <span style="font-weight:400;color:var(--g600);font-size:11px">(Message composer)</span></div><div style="font-size:12px;color:var(--n500)">The 5-step authority message. Leads with observation, ends with a soft peer ask.</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--n300);color:var(--n700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">5</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Share credibility asset <span style="font-weight:400;color:var(--n400);font-size:11px">(Case snapshot)</span></div><div style="font-size:12px;color:var(--n500)">Send your case snapshot or one-pager. No strings — just "thought this might be relevant."</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--n300);color:var(--n700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">6</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Front door offer <span style="font-weight:400;color:var(--n400);font-size:11px">(Offer builder)</span></div><div style="font-size:12px;color:var(--n500)">Present your low-commitment entry offer. Diagnostic, audit, or workshop before the retainer.</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0;border-bottom:1px solid var(--n100)"><div style="width:24px;height:24px;border-radius:50%;background:var(--n300);color:var(--n700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">7</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Follow-up / check-in <span style="font-weight:400;color:var(--n400);font-size:11px">(Follow-up generator)</span></div><div style="font-size:12px;color:var(--n500)">Value-led check-in. No pressure. "Wanted to see how you're getting on with X."</div></div></div>
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;padding:6px 0"><div style="width:24px;height:24px;border-radius:50%;background:var(--n300);color:var(--n700);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">8</div><div><div style="font-size:13px;font-weight:500;color:var(--n900)">Soft ask or referral</div><div style="font-size:12px;color:var(--n500)">If not ready, ask who else might benefit. Keep the door open. Stay in the network.</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:10px">Common mistakes to avoid</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="tip"><div class="tip-dot" style="background:var(--a600)"></div><span>Opening with who you are instead of what you know</span></div>
+      <div class="tip"><div class="tip-dot" style="background:var(--a600)"></div><span>Positioning yourself as able to help with everything — focus on specific expertise</span></div>
+      <div class="tip"><div class="tip-dot" style="background:var(--a600)"></div><span>Generic pitches with no personalisation to name or sector</span></div>
+      <div class="tip"><div class="tip-dot" style="background:var(--a600)"></div><span>Sending one message and assuming disinterest</span></div>
+      <div class="tip"><div class="tip-dot" style="background:var(--a600)"></div><span>Starting with LinkedIn search instead of existing relationships</span></div>
+      <div class="tip"><div class="tip-dot" style="background:var(--a600)"></div><span>Pitching before you've offered any value at all</span></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+let apiKey = '';
+let mcCurrentStep = 1;
+const sqTouches = [
+  {num:1, label:'Connect', type:'LinkedIn / email', prompt:'Write a warm, personal reconnect message or connection request note. No pitch. Just re-establishing contact. 30–40 words max.'},
+  {num:2, label:'Value share', type:'No ask', prompt:'Write a short value-share message. Share something genuinely useful to them — an article, observation, or insight — with absolutely no ask. 40–60 words.'},
+  {num:3, label:'Content engage', type:'Comment / like', prompt:'Write a meaningful comment they could leave on the contact\'s LinkedIn post, or a short message referencing something the contact recently posted or shared. Personal, specific, no pitch. 30–40 words.'},
+  {num:4, label:'Hook message', type:'Authority message', prompt:'Write the full 5-step authority message: hook observation → their world → value offer → peer ask. This is the core outreach message. 80–120 words. Lead with insight, not self.'},
+  {num:5, label:'Asset share', type:'Credibility gift', prompt:'Write a short message sharing a credibility asset (case snapshot or one-pager). No strings — just "thought this might be relevant to what you\'re dealing with." 40–60 words.'},
+  {num:6, label:'Front door offer', type:'Entry offer', prompt:'Write a message presenting the front door offer — a small, bounded piece of work before a retainer. Low commitment, clear value, easy to say yes to. 60–80 words.'},
+  {num:7, label:'Check-in', type:'Value follow-up', prompt:'Write a warm, value-led check-in. Reference something relevant in their world. No pressure, no pitch. "Wanted to see how you\'re getting on with X." 40–50 words.'},
+  {num:8, label:'Soft ask', type:'Referral / ask', prompt:'Write a gentle final touch. If timing isn\'t right, ask who else might benefit — keep the door open and stay in the network. Warm, no desperation. 40–60 words.'},
+];
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function openModal(){document.getElementById('modal-overlay').classList.add('open')}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
+function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal()}
+
+function saveApiKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k.startsWith('sk-')){alert('Doesn\'t look like a valid key (should start with sk-ant-...)');return}
+  apiKey=k;
+  document.getElementById('api-dot').classList.add('ok');
+  document.getElementById('api-status-label').textContent='API key saved';
+  closeModal();
+}
+
+function showView(id, navEl){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl) navEl.classList.add('active');
+  else {
+    document.querySelectorAll('.nav-item').forEach(n=>{
+      if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
+    });
+  }
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selChip(el, groupId){
+  document.querySelectorAll('#'+groupId+' .chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selChipVal(el, groupId, inputId){
+  document.querySelectorAll('#'+groupId+' .chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const inp=document.getElementById(inputId);
+  if(inp) inp.value=el.textContent;
+}
+function getSelChip(groupId){
+  const sel=document.querySelector('#'+groupId+' .chip.sel');
+  return sel?sel.textContent:'';
+}
+
+function g(id){return(document.getElementById(id)||{}).value||''}
+
+async function callClaude(prompt, outputId, wcId){
+  if(!apiKey){openModal();return null}
+  const box=document.getElementById(outputId);
+  box.className='output-box loading';
+  box.textContent='Drafting your content...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-calls':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await r.json();
+    if(data.error)throw new Error(data.error.message);
+    const text=data.content?.find(b=>b.type==='text')?.text||'Error — please try again.';
+    box.className='output-box';
+    box.textContent=text;
+    if(wcId){const wc=text.trim().split(/\s+/).length;document.getElementById(wcId).textContent=wc+' words'}
+    return text;
+  }catch(e){
+    box.className='output-box';
+    box.textContent='Error: '+e.message;
+    return null;
+  }
+}
+
+function copyOutput(boxId, btnId){
+  const text=document.getElementById(boxId).textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById(btnId);
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy',2000);
+  });
+}
+
+/* ── INSIGHT POST ── */
+async function generateInsightPost(){
+  if(!apiKey){openModal();return}
+  const insight=g('ip-insight'),sector=g('ip-sector'),format=g('ip-format'),proof=g('ip-proof'),tone=getSelChip('ip-tone-chips');
+  if(!insight){alert('Add your core insight first.');return}
+  document.getElementById('ip-output').style.display='block';
+  const prompt=`You are writing a LinkedIn insight post for Allan Nielsen, an independent HR consultant with 15+ years in Talent Management, Performance Management, L&D, and SAP SuccessFactors. Allan is building his consultancy.
+
+Write a ${format} LinkedIn post with a ${tone||'direct and grounded'} tone.
+
+CORE INSIGHT: ${insight}
+TARGET AUDIENCE: ${sector||'HR leaders and CHROs'}
+PROOF / PROJECT TO DRAW FROM: ${proof||'Draw on general HR consulting experience'}
+
+RULES:
+- 150–220 words
+- Do NOT start with "I" — start with the observation, a question, or a bold statement
+- No hashtag spam (maximum 3 relevant hashtags at the end if needed)
+- No "I'm excited to share" or engagement-bait openers
+- No bullet-point listicles — flowing, authoritative prose
+- End with one thought-provoking question or statement, not a call to action
+- Sound like a senior practitioner who has seen this first-hand, not a LinkedIn influencer
+- Output the post ONLY — no preamble or labels`;
+  await callClaude(prompt,'ip-draft','ip-wc');
+}
+
+/* ── CASE SNAPSHOT ── */
+async function generateCaseSnapshot(){
+  if(!apiKey){openModal();return}
+  const client=g('cs-client'),type=g('cs-type'),situation=g('cs-situation'),approach=g('cs-approach'),result=g('cs-result'),format=g('cs-format'),recipient=g('cs-recipient');
+  if(!situation||!approach||!result){alert('Fill in the situation, approach, and result.');return}
+  document.getElementById('cs-output').style.display='block';
+  const prompt=`Write a ${format} credibility case snapshot for Allan Nielsen, an independent HR consultant.
+
+CLIENT: ${client||'Confidential — large European company'}
+PROJECT TYPE: ${type}
+SITUATION: ${situation}
+APPROACH: ${approach}
+RESULT: ${result}
+INTENDED FOR: ${recipient||'HR leaders considering similar challenges'}
+
+RULES:
+- Structure: clear Situation / Approach / Result or equivalent narrative
+- 180–280 words
+- Quantify results wherever possible
+- Professional but not corporate — authoritative and clear
+- Write in third person ("Allan..." or "The consultant...")
+- Make it feel like a proof point, not a sales brochure
+- Output the snapshot ONLY — no preamble`;
+  await callClaude(prompt,'cs-draft',null);
+}
+
+/* ── MESSAGE COMPOSER ── */
+function mcStep(n){
+  for(let i=1;i<=5;i++){
+    const p=document.getElementById('mc-p'+i),pill=document.getElementById('mc-pill-'+i);
+    p.classList.toggle('vis',i===n);
+    pill.classList.remove('active','done');
+    if(i<n)pill.classList.add('done');
+    if(i===n)pill.classList.add('active');
+  }
+  document.getElementById('mc-prog').style.width=(n*20)+'%';
+  document.getElementById('mc-output').style.display='none';
+  mcCurrentStep=n;
+}
+async function generateMessage(){
+  if(!apiKey){openModal();return}
+  const name=g('mc-name'),role=g('mc-role'),company=g('mc-company'),sector=g('mc-sector'),rel=g('mc-rel'),world=g('mc-world'),hook=g('mc-hook'),offer=g('mc-offer'),channel=g('mc-channel'),ask=g('mc-ask'),extra=g('mc-extra');
+  if(!name||!world||!hook){alert('Fill in contact name (step 1), their world (step 2), and your hook (step 3).');return}
+  for(let i=1;i<=5;i++) document.getElementById('mc-p'+i).classList.remove('vis');
+  const out=document.getElementById('mc-output');out.style.display='block';
+  const meta=document.getElementById('mc-meta');
+  meta.innerHTML=`<span style="font-size:11px;padding:3px 8px;border-radius:10px;background:var(--g100);color:var(--g800)">To: ${name}</span><span style="font-size:11px;padding:3px 8px;border-radius:10px;background:var(--n100);color:var(--n700)">Via: ${channel}</span><span style="font-size:11px;padding:3px 8px;border-radius:10px;background:var(--n100);color:var(--n700)">${rel||'Warm contact'}</span>`;
+  const words=channel==='LinkedIn message'?'80–120 words':'120–160 words';
+  const prompt=`Write a short authority outreach message for Allan Nielsen, independent HR consultant (15+ years: Talent Mgmt, Performance Mgmt, L&D, SAP SuccessFactors). Global Maritime is his anchor client.
+
+Use the MindAbility 5-step framework. Peer-to-peer. Warm. Human — not a template.
+
+CONTACT: ${name}, ${role||'HR leader'}, ${company||'their organisation'}, ${sector||'their sector'}
+RELATIONSHIP: ${rel||'warm contact'}
+HOOK: ${hook}
+THEIR WORLD: ${world}
+VALUE OFFER: ${offer||"I've put together a short diagnostic on this — happy to share if useful."}
+ASK: ${ask}
+PERSONAL TOUCH: ${extra||'Keep it warm and natural.'}
+CHANNEL: ${channel} · TARGET: ${words}
+
+RULES: Don't start with "I". No "hope this finds you well". No buzzwords. One clear peer-level ask at the end. ${channel==='email'?'Include subject line prefixed "Subject: " on first line.':'No subject line.'} Output message ONLY.`;
+  await callClaude(prompt,'mc-draft','mc-wc');
+}
+function resetMC(){
+  document.getElementById('mc-output').style.display='none';
+  mcStep(1);
+  ['mc-name','mc-role','mc-company','mc-sector','mc-rel','mc-world','mc-hook','mc-offer','mc-extra'].forEach(id=>document.getElementById(id).value='');
+}
+
+/* ── SEQUENCE PLANNER ── */
+async function generateSequence(){
+  if(!apiKey){openModal();return}
+  const name=g('sq-name'),role=g('sq-role'),company=g('sq-company'),sector=g('sq-sector'),tier=g('sq-tier'),challenge=g('sq-challenge'),asset=g('sq-asset'),offer=g('sq-offer');
+  if(!name||!challenge){alert('Add contact name and their key challenge.');return}
+  document.getElementById('sq-form').style.display='none';
+  const out=document.getElementById('sq-output');out.style.display='block';
+  document.getElementById('sq-output-title').textContent='8-touch sequence for '+name;
+  const track=document.getElementById('sq-touch-track');
+  const cards=document.getElementById('sq-cards');
+  track.innerHTML='';cards.innerHTML='';
+  sqTouches.forEach((t,i)=>{
+    track.innerHTML+=`<div class="touch-node" id="tn-${i}"><div class="touch-circle">${t.num}</div><div class="touch-label">${t.label}</div></div>`;
+    cards.innerHTML+=`<div class="sequence-card" id="sc-${i}">
+      <div class="sequence-hdr" onclick="toggleSeq(${i})">
+        <div class="sequence-num">${t.num}</div>
+        <div class="sequence-title">${t.label}</div>
+        <div class="sequence-type">${t.type}</div>
+      </div>
+      <div class="sequence-body" id="sb-${i}">
+        <div class="sequence-msg loading" id="sm-${i}">Generating touch ${t.num}...</div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn btn-xs" onclick="copySeqMsg(${i})">Copy</button>
+          <button class="btn btn-xs btn-primary" onclick="regenSeqMsg(${i})">Regenerate</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('sb-0').classList.add('open');
+  document.getElementById('tn-0').classList.add('current');
+  for(let i=0;i<sqTouches.length;i++){
+    await genSeqTouch(i,name,role,company,sector,tier,challenge,asset,offer);
+    document.getElementById('tn-'+i).classList.remove('current');
+    document.getElementById('tn-'+i).classList.add('done');
+    if(i<sqTouches.length-1) document.getElementById('tn-'+(i+1)).classList.add('current');
+  }
+}
+async function genSeqTouch(i,name,role,company,sector,tier,challenge,asset,offer){
+  const t=sqTouches[i];
+  const box=document.getElementById('sm-'+i);
+  const fullPrompt=`Write touch ${t.num} of an 8-touch outreach sequence for Allan Nielsen, independent HR consultant.
+
+CONTACT: ${name}, ${role||'HR leader'}, ${company||'their company'}, ${sector||'their sector'}
+TIER/RELATIONSHIP: ${tier}
+KEY CHALLENGE IN THEIR WORLD: ${challenge}
+CREDIBILITY ASSET TO SHARE (touch 5): ${asset||'HR consulting case snapshot'}
+FRONT DOOR OFFER (touch 6): ${offer||'Talent diagnostic session'}
+
+TOUCH ${t.num} — ${t.label} (${t.type}):
+${t.prompt}
+
+RULES: Peer-to-peer, warm, no pitch until touch 6. Each touch builds on the last. Sound like Allan wrote it — direct, confident, human. Output the message ONLY, no labels.`;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:600,messages:[{role:'user',content:fullPrompt}]})});
+  const data=await r.json();
+  const text=data.content?.find(b=>b.type==='text')?.text||'Error generating touch '+t.num;
+  box.className='sequence-msg';
+  box.textContent=text;
+}
+function toggleSeq(i){document.getElementById('sb-'+i).classList.toggle('open')}
+function copySeqMsg(i){navigator.clipboard.writeText(document.getElementById('sm-'+i).textContent).then(()=>{setTimeout(()=>{},1500)})}
+async function regenSeqMsg(i){
+  const name=g('sq-name')||'the contact';
+  document.getElementById('sm-'+i).className='sequence-msg loading';
+  document.getElementById('sm-'+i).textContent='Regenerating...';
+  await genSeqTouch(i,name,g('sq-role'),g('sq-company'),g('sq-sector'),g('sq-tier'),g('sq-challenge'),g('sq-asset'),g('sq-offer'));
+}
+function resetSequence(){
+  document.getElementById('sq-form').style.display='block';
+  document.getElementById('sq-output').style.display='none';
+}
+
+/* ── FRONT DOOR OFFER ── */
+async function generateFrontDoor(){
+  if(!apiKey){openModal();return}
+  const service=g('fd-service'),client=g('fd-client'),problem=g('fd-problem'),type=g('fd-type'),price=g('fd-price');
+  if(!problem){alert('Describe the problem they\'re facing.');return}
+  document.getElementById('fd-output').style.display='block';
+  const prompt=`Design a front door offer for Allan Nielsen, independent HR consultant (Talent Mgmt, Performance Mgmt, L&D, SAP SuccessFactors).
+
+SERVICE AREA: ${service}
+TARGET CLIENT: ${client||'Mid-size organisations, CHRO-led'}
+CLIENT PROBLEM: ${problem}
+OFFER TYPE: ${type}
+PRICE: ${price}
+
+Write a compelling front door offer description that includes:
+1. A sharp name for the offer (5 words max)
+2. One-sentence description of what it is
+3. What's included (3–5 bullet points)
+4. What they'll walk away with
+5. Why now / why this matters
+6. The investment / next step
+
+RULES: Authoritative, clear, zero fluff. Not a sales pitch — a confident practitioner describing useful work. 200–280 words total. Output the offer ONLY.`;
+  await callClaude(prompt,'fd-draft',null);
+}
+
+/* ── FOLLOW-UP ── */
+async function generateFollowUp(){
+  if(!apiKey){openModal();return}
+  const name=g('fu-name'),company=g('fu-company'),last=g('fu-last'),touch=g('fu-touch'),value=g('fu-value'),channel=g('fu-channel');
+  if(!name||!last){alert('Add contact name and last interaction details.');return}
+  document.getElementById('fu-output').style.display='block';
+  const prompt=`Write a follow-up outreach message for Allan Nielsen, independent HR consultant.
+
+CONTACT: ${name}, ${company||'their company'}
+LAST INTERACTION: ${last}
+THIS IS: ${touch}
+VALUE TO ADD: ${value||'A useful observation or resource relevant to their world'}
+CHANNEL: ${channel}
+
+RULES:
+- 40–70 words (short — follow-ups must be brief)
+- Lead with value, not "just checking in"
+- Peer-level, warm, no pressure
+- Reference the last interaction naturally
+- One soft, low-pressure next step at the end
+- Do not start with "I"
+- Output message ONLY`;
+  await callClaude(prompt,'fu-draft','fu-wc');
+}
+</script>
+</body>
+</html>
