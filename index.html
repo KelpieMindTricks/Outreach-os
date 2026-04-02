@@ -905,8 +905,12 @@ select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='htt
 </main>
 
 <script>
-let apiKey = '';
+let apiKey = localStorage.getItem('outos_api_key') || '';
 let mcCurrentStep = 1;
+if(apiKey){
+  document.getElementById('api-dot').classList.add('ok');
+  document.getElementById('api-status-label').textContent='API key saved';
+}
 const sqTouches = [
   {num:1, label:'Connect', type:'LinkedIn / email', prompt:'Write a warm, personal reconnect message or connection request note. No pitch. Just re-establishing contact. 30–40 words max.'},
   {num:2, label:'Value share', type:'No ask', prompt:'Write a short value-share message. Share something genuinely useful to them — an article, observation, or insight — with absolutely no ask. 40–60 words.'},
@@ -928,8 +932,9 @@ function closeModalOutside(e){if(e.target===document.getElementById('modal-overl
 
 function saveApiKey(){
   const k=document.getElementById('api-key-input').value.trim();
-  if(!k.startsWith('sk-')){alert('Doesn\'t look like a valid key (should start with sk-ant-...)');return}
+  if(!k.startsWith('sk-')){alert('Doesn\'t look like a valid Anthropic API key. It should start with sk-ant-...');return}
   apiKey=k;
+  localStorage.setItem('outos_api_key',k);
   document.getElementById('api-dot').classList.add('ok');
   document.getElementById('api-status-label').textContent='API key saved';
   closeModal();
@@ -987,7 +992,7 @@ async function callClaude(prompt, outputId, wcId){
       })
     });
     const data=await r.json();
-    if(data.error)throw new Error(data.error.message);
+    if(data.error)throw new Error(data.error.message+' (type: '+data.error.type+')');
     const text=data.content?.find(b=>b.type==='text')?.text||'Error — please try again.';
     box.className='output-box';
     box.textContent=text;
@@ -995,7 +1000,7 @@ async function callClaude(prompt, outputId, wcId){
     return text;
   }catch(e){
     box.className='output-box';
-    box.textContent='Error: '+e.message;
+    box.textContent='Error: '+e.message+'\n\nCheck your API key is correct and has credits available.';
     return null;
   }
 }
